@@ -1,3 +1,5 @@
+// stores initial state
+
 import OpenAi from 'openai'
 import {writable, get} from 'svelte/store'
 import * as kv from 'idb-keyval'
@@ -12,6 +14,7 @@ export const session = writable({
     loaded: false,
 })
 
+// gets all previously saved states from indexedb, updates state store with it. if fetched states have api key, make an openai connection
 ;(async function init() {
     const state_idb = await kv.get('state')
     if (state_idb) {
@@ -33,7 +36,7 @@ export function init_openai() {
     const openai_conn = new OpenAi({
         apiKey: $state.api_key,
         apiKey: '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',
-        // dangerouslyAllowBrowser: true,
+        dangerouslyAllowBrowser: true,
     })
     openai.set(openai_conn)
 }
