@@ -1,6 +1,56 @@
-<input type="text" id="prompt" placeholder="Enter your prompt here">
-<button on:click={genui}>Input Message</button>
+<!-- <input type="text" id="prompt" placeholder="Enter your prompt here">
+<button on:click={genui}>Input Message</button> -->
 
+<style>
+  .container {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .history {
+    flex-basis: 30%;
+    overflow-y: auto;
+    height: 90vh; /* Adjust based on your needs */
+  }
+
+  .current {
+    flex-grow: 1;
+  }
+
+  .revision {
+    background-color: #f3f4f6; /* bg-gray-100 */
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+</style>
+
+<div class="container">
+  <!-- History of chats on the left -->
+  <div class="history">
+    {#each view_data.revisions as revision}
+      <div class="revision">
+        <p><strong>Prompt:</strong> {revision.prompt}</p>
+        <p><strong>Timestamp:</strong> {new Date(revision.timestamp).toLocaleString()}</p>
+        <pre>{revision.code}</pre>
+      </div>
+    {/each}
+  </div>
+
+  <!-- Current prompt and response in the middle -->
+  <div class="current">
+    <input type="text" id="prompt" placeholder="Enter your prompt here" class="input bg-gray-100 p-2">
+    <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
+
+    {#if view_data.revisions.at(-1)}
+      <pre class="bg-gray-100 p-4">{view_data.revisions.at(-1).code}</pre>
+      <div class="bg-gray-100 p-4">{@html view_data.revisions.at(-1).code}</div>
+    {/if}
+  </div>
+</div>
+
+
+<!-- uncomment -->
+<!-- 
 {#if view_data.revisions.at(-1)}
 <pre class="bg-gray-100 p-4">
   {view_data.revisions.at(-1).code}
@@ -10,13 +60,13 @@
   {@html view_data.revisions.at(-1).code}
 </div>
 {/if}
-
+ --> 
 <!-- need to find a way to make the history cleaner -->
 <!-- displays all recent promps and code at end -->
-{#each view_data.revisions as revision}
+<!-- {#each view_data.revisions as revision}
   {revision.prompt}
   {revision.code}
-{/each}
+{/each}  -->
 
 <script>
 import * as kv from 'idb-keyval'
