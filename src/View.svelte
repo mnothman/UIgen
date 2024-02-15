@@ -11,8 +11,11 @@
 </div>
 {/if}
 
+<!-- need to find a way to make the history cleaner -->
+<!-- displays all recent promps and code at end -->
 {#each view_data.revisions as revision}
   {revision.prompt}
+  {revision.code}
 {/each}
 
 <script>
@@ -48,7 +51,8 @@ async function genui() {
         // model: 'codellama/CodeLlama-70b-Instruct-hf',
     })
     const newRevision = {
-        id: Date.now(), // Use a more unique identifier if needed
+        id,
+        timestamp: Date.now(), // Use a more unique identifier if needed
         prompt,
         code: response.choices[0].message.content,
     };
@@ -60,14 +64,16 @@ async function genui() {
     kv.set('view_' + id, view_data);
 
     console.log(newRevision.code);
-//     view_data = view_data
-//     if (is_new) {
-//         kv.set('view_' + id, view_data)
-//     } else if (!is_new) {
-//       view_data.revisions.push(newRevision);
+    view_data = { ...view_data, revisions: [...view_data.revisions] };
+
+    // view_data = view_data
+    // if (is_new) {
+    //     kv.set('view_' + id, view_data)
+    // } else if (!is_new) {
+    //   view_data.revisions.push(newRevision);
 //       // view_data.revisions.push({id, prompt, code: response.choices[1].message.content}) //what we need to do is to pass in the previous code with the new prompt, 
 //       //and have it display the entire code back with new changes instead of just the new code. also need to deal with how to make the response.choices[++ to work] 
-//     }
+    // }
 //     // console.log(response.choices[0].message.content)
 //     // return {code: response.choices[0].message.content}
  }
