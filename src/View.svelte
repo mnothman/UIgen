@@ -2,57 +2,84 @@
   .container {
     display: flex;
     gap: 1rem;
+    width: 100%;
+    /* height: 90vh; Adjust the height of the container to take up most of the viewport height */
+
   }
 
   .history {
-    flex-basis: 30%;
+    /* flex-basis: 30%; */
+    width: 240px;
     overflow-y: auto;
     height: 90vh; 
   }
 
-  .current {
+  /* .current {
     flex-grow: 1;
-  }
+    width: calc(100% - 180px - 1rem);
+  } */
+.current {
+  flex-grow: 1;
+  width: calc(100% - 240px - 1rem); /* Adjusted to account for the fixed width of the history panel */
+  overflow: hidden; /* Prevents overflow outside this container */
+  position: relative; /*Establishes a positioning context for absolutely positioned children if needed */
+}
+
+.current > div, .current > pre {
+  max-height: 80vh; /* Adjust based on your needs to control the height */
+  overflow: auto; /* Makes content scrollable if it exceeds the container's bounds */
+  padding: 1rem;
+  background-color: #f3f4f6; /* Matches the existing style for consistency */
+  margin-bottom: 1rem; /* Space between elements */
+}
+
+.current > div {
+  width: 100%; /* Ensures the div takes up the full width of its parent */
+  box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+}
+
+.current > pre {
+  white-space: pre-wrap; /* Ensures that data is wrapped within the container */
+  word-wrap: break-word; /* Breaks long words to prevent horizontal scrolling */
+  max-width: 100%; /* Prevents the element from extending beyond its container */
+}
+
+
 
   .revision {
-    background-color: #f3f4f6; 
+    background-color: #757575; 
     padding: 1rem;
     margin-bottom: 1rem;
   }
-
+/* 
   .truncated {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  /* .truncated {
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
+  } */
+ 
 
 </style>
 
 <div class="container">
   <!-- History of chats on the left -->
   <div class="history">
-    {#each view_data.revisions as revision, index}
+    <!-- {#each view_data.revisions as revision, index} -->
+    {#each [...view_data.revisions].reverse() as revision, index}
       <div class="revision">
         <p><strong>Prompt:</strong> {revision.prompt}</p>
         <p><strong>Timestamp:</strong> {new Date(revision.timestamp).toLocaleString()}</p>
-        <pre>{revision.code}</pre>
+        <!-- <pre>{revision.code THIS UNCOMMENTS CODE IN HISTORY}</pre> -->
 
-        {#if $expandedRevisions[index]}
-          <pre>{revision.code}</pre>
-          <button on:click={() => toggleExpansion(index)}>Show less</button>
-        {:else}
-          <div class="truncated">
-            <pre>{revision.code}</pre>
-            <button on:click={() => toggleExpansion(index)}>...</button>
-          </div>
-        {/if}
+        <!-- {#if $expandedRevisions[index]} -->
+          <!-- <pre>{revision.code THIS UNCOMMENTS CODE IN HISTORY}</pre> -->
+          <!-- <button on:click={() => toggleExpansion(index)}>Show less</button> -->
+        <!-- {:else}  -->
+          <!-- <div class="truncated"> -->
+            <!-- <pre>{revision.code THIS UNCOMMENTS CODE IN HISTORY}</pre> -->
+            <!-- <button on:click={() => toggleExpansion(index)}>...</button> -->
+          <!-- </div> -->
+        <!-- {/if} -->
       </div>
     {/each}
   </div>
@@ -65,15 +92,17 @@
     {#if view_data.revisions.at(-1)}
     <!-- this line below is what shows the code at bottom of screen -->
     <div class="bg-gray-100 p-4">{@html view_data.revisions.at(-1).code}</div>
-    {#if currentExpanded}
-      <pre class="bg-gray-100 p-4">{view_data.revisions.at(-1).code}</pre>
-      <button on:click={toggleCurrentExpansion}>Show less</button>
-    {:else}
-      <div class="truncated bg-gray-100 p-4">
-        <pre>{view_data.revisions.at(-1).code}</pre>
-        <button on:click={toggleCurrentExpansion}>...</button>
-      </div>
-    {/if}
+    <pre>{view_data.revisions.at(-1).code}</pre>
+
+    <!-- {#if currentExpanded} -->
+      <!-- <pre class="bg-gray-100 p-4">{view_data.revisions.at(-1).code}</pre> -->
+      <!-- <button on:click={toggleCurrentExpansion}>Show less</button> -->
+    <!-- {:else} -->
+      <!-- <div class="truncated bg-gray-100 p-4"> -->
+        <!-- <pre>{view_data.revisions.at(-1).code}</pre> -->
+        <!-- <button on:click={toggleCurrentExpansion}>...</button> -->
+      <!-- </div> -->
+    <!-- {/if} -->
   {/if}
 </div>
 </div>
@@ -82,21 +111,21 @@
 <script>
 import * as kv from 'idb-keyval'
 import {openai} from './store.js'
-import { writable } from 'svelte/store';
+// import { writable } from 'svelte/store';
 
-let expandedRevisions = writable({});
-let currentExpanded = false;
+// let expandedRevisions = writable({});
+// let currentExpanded = false;
 
-function toggleExpansion(index) {
-    expandedRevisions.update(current => {
-      const newState = !current[index];
-      return { ...current, [index]: newState };
-    });
-  }
+// function toggleExpansion(index) {
+//     expandedRevisions.update(current => {
+//       const newState = !current[index];
+//       return { ...current, [index]: newState };
+//     });
+//   }
 
-  function toggleCurrentExpansion() {
-    currentExpanded = !currentExpanded;
-  }
+  // function toggleCurrentExpansion() {
+  //   currentExpanded = !currentExpanded;
+  // }
 
 
 //when button clicked, triggers genui function, takes user input, sends to openai, and returns the response
