@@ -69,42 +69,22 @@
       <div class="revision">
         <p><strong>Prompt:</strong> {revision.prompt}</p>
         <p><strong>Timestamp:</strong> {new Date(revision.timestamp).toLocaleString()}</p>
-        <!-- <pre>{revision.code THIS UNCOMMENTS CODE IN HISTORY}</pre> -->
-
-        <!-- {#if $expandedRevisions[index]} -->
-          <!-- <pre>{revision.code THIS UNCOMMENTS CODE IN HISTORY}</pre> -->
-          <!-- <button on:click={() => toggleExpansion(index)}>Show less</button> -->
-        <!-- {:else}  -->
-          <!-- <div class="truncated"> -->
-            <!-- <pre>{revision.code THIS UNCOMMENTS CODE IN HISTORY}</pre> -->
-            <!-- <button on:click={() => toggleExpansion(index)}>...</button> -->
-          <!-- </div> -->
-        <!-- {/if} -->
+        <!-- somewhere here the html isnt working for the current page -->
       </div>
     {/each}
   </div>
 
-  <!-- Current prompt and response in the middle -->
   <div class="current">
     <input type="text" id="prompt" placeholder="Enter your prompt here" class="input bg-gray-100 p-2">
     <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
 
     {#if view_data.revisions.at(-1)}
-    <!-- this line below is what shows the code at bottom of screen -->
-    <div class="bg-gray-100 p-4">{@html view_data.revisions.at(-1).code}</div>
-    <pre>{view_data.revisions.at(-1).code}</pre>
-
-    <!-- {#if currentExpanded} -->
-      <!-- <pre class="bg-gray-100 p-4">{view_data.revisions.at(-1).code}</pre> -->
-      <!-- <button on:click={toggleCurrentExpansion}>Show less</button> -->
-    <!-- {:else} -->
-      <!-- <div class="truncated bg-gray-100 p-4"> -->
-        <!-- <pre>{view_data.revisions.at(-1).code}</pre> -->
-        <!-- <button on:click={toggleCurrentExpansion}>...</button> -->
-      <!-- </div> -->
-    <!-- {/if} -->
-  {/if}
-</div>
+      <!-- This line displays the code at the bottom of the screen -->
+      <div class="bg-gray-100 p-4">{@html view_data.revisions.at(-1).code}</div>
+      <!-- Optionally, you can show the code in a <pre> tag if you want to display the raw HTML -->
+      <pre>{view_data.revisions.at(-1).code}</pre>
+    {/if}
+  </div>
 </div>
 
 
@@ -173,4 +153,3 @@ let is_new = false
     console.log(view_data)
 })()
 </script>
-
