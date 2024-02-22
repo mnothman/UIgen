@@ -51,13 +51,7 @@
     padding: 1rem;
     margin-bottom: 1rem;
   }
-/* 
-  .truncated {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  } */
- 
+
 
 </style>
 
@@ -79,9 +73,8 @@
     <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
 
     {#if view_data.revisions.at(-1)}
-      <!-- This line displays the code at the bottom of the screen -->
       <div class="bg-gray-100 p-4">{@html view_data.revisions.at(-1).code}</div>
-      <!-- Optionally, you can show the code in a <pre> tag if you want to display the raw HTML -->
+<!-- raw html -->
       <pre>{view_data.revisions.at(-1).code}</pre>
     {/if}
   </div>
@@ -91,21 +84,6 @@
 <script>
 import * as kv from 'idb-keyval'
 import {openai} from './store.js'
-// import { writable } from 'svelte/store';
-
-// let expandedRevisions = writable({});
-// let currentExpanded = false;
-
-// function toggleExpansion(index) {
-//     expandedRevisions.update(current => {
-//       const newState = !current[index];
-//       return { ...current, [index]: newState };
-//     });
-//   }
-
-  // function toggleCurrentExpansion() {
-  //   currentExpanded = !currentExpanded;
-  // }
 
 
 //when button clicked, triggers genui function, takes user input, sends to openai, and returns the response
