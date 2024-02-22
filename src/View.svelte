@@ -73,8 +73,7 @@
     <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
 
     {#if view_data.revisions.at(-1)}
-      <div class="bg-gray-100 p-4">{@html view_data.revisions.at(-1).code}</div>
-<!-- raw html -->
+      <iframe srcdoc={'<script src=https://cdn.tailwindcss.com></script>\n' + view_data.revisions.at(-1).code} class="w-full h-[20rem] border m-5 shadow-2xl" title/>
       <pre>{view_data.revisions.at(-1).code}</pre>
     {/if}
   </div>
@@ -88,11 +87,14 @@ import {openai} from './store.js'
 
 //when button clicked, triggers genui function, takes user input, sends to openai, and returns the response
 async function genui() {
-    const prompt = document.getElementById('prompt').value
+    let prompt = document.getElementById('prompt').value
+    let fullPrompt = prompt
     const system_prompt = 'You are a helpful assistant. You create html and tailwind css from a chat. Use only Tailwind for styling. Only respond with HTML! Do not explain anything.'
-    const lastRevision = view_data.revisions.at(-1)
-    const previousCode = lastRevision ? lastRevision.code : "";
-    const fullPrompt = `Previous code:\n${previousCode}\n\nNew user prompt: ${prompt}`;
+    const prev_code = view_data.revisions.at(-1)?.code || ''
+    if (prev_code) {
+        fullPrompt = `${prompt}; apply the change to the following code:\n${prev_code}`
+    }
+    console.log(fullPrompt)
     const response = await $openai.chat.completions.create({
         messages: [
             {role: 'system', content: system_prompt},
@@ -106,6 +108,7 @@ async function genui() {
         prompt,
         code: response.choices[0].message.content,
     };
+    newRevision.code = newRevision.code.replace(/^```html\n/, '').replace(/\n```\s*$/, '');
 
     // Push the new revision onto the revisions array
     view_data.revisions.push(newRevision);

@@ -1,6 +1,7 @@
 <!-- Home page with list of revisions -->
 {#if !$state.api_key}
-  <button class=btn on:click={open_set_key_modal}>Set Key</button>
+  <!-- <button class=btn on:click={open_set_key_modal}>Set Key</button> -->
+  <button class=btn on:click={() => $state.api_key = window.prompt('Enter your OpenAI API key')}>Set Key</button>
 {/if}
 
 <button class=btn on:click={new_view}>New Chat</button>
