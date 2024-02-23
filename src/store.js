@@ -35,7 +35,6 @@ export function init_openai() {
     const $state = get(state)
     const openai_conn = new OpenAi({
         apiKey: $state.api_key,
-        apiKey: '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',
         dangerouslyAllowBrowser: true,
     })
     openai.set(openai_conn)

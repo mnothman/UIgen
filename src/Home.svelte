@@ -2,6 +2,9 @@
 {#if !$state.api_key}
   <button class="btn" on:click={() => $state.api_key = window.prompt('Enter your OpenAI API key')}>Set Key</button>
 {/if}
+{#if $state.api_key}
+  <button class="btn" on:click={() => $state.api_key = window.prompt('Change your OpenAI API key')}>Change Key</button>
+{/if}
 
 <button class="btn" on:click={new_view}>New Chat</button>
 
