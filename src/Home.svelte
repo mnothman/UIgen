@@ -17,7 +17,9 @@
                 <p>{view.revisions[0].prompt}</p>
                 <!-- place holder for rendered code-->
                 <!-- <iframe  /> and /or <div class="rendered-code">...</div> -->
-                <span>{new Date(view.revisions[0].timestamp).toLocaleDateString()}</span>
+                {@html view.revisions[0].code} <!-- Assuming `code` contains the HTML to render -->
+                <span>{view.revisions.length} revisions</span>
+                <span>{new Date(view.revisions[0].timestamp).toLocaleString()}</span>
             </a>
         </div>
     {/each}
@@ -41,6 +43,8 @@ function new_view() {
 </script>
 
 <style>
+
+
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
@@ -53,16 +57,46 @@ function new_view() {
     padding: 1rem;
     background-color: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
+    /* Set fixed dimensions */
+    width: 260px; /* Adjust width as needed */
+    height: 250px; /* Adjust height as needed */
+    
+    /* Handling overflow */
+    overflow: hidden; /* Hide overflow. Alternatively, use 'auto' to add scrollbars */
+    
+    display: flex;
+    flex-direction: column;
 }
 
 .grid-item a {
     display: block;
     text-decoration: none;
     color: inherit;
+    overflow: hidden; /* Ensures that content does not overflow the link boundary */
 }
 
 .rendered-code, iframe {
-    max-height: 150px; 
-    overflow: auto; 
+    max-height: 100%; /* Adjust based on your needs */
+    overflow: auto; /* Adds a scrollbar if content exceeds this height */
 }
+
+/* Additional styles for text truncation and layout */
+.grid-item p, .grid-item span {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Adjustments for rendered code to ensure it fits within the layout */
+.rendered-code {
+    font-size: 0.75rem; /* Smaller font size for code */
+    white-space: nowrap; /* Adjust based on preference */
+    overflow-x: auto; /* Horizontal scrolling for single lines of code */
+}
+
+
+
 </style>
