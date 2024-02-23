@@ -85,6 +85,7 @@
     <input type="text" id="prompt" placeholder="Enter your prompt here" class="input bg-gray-100 p-2">
     <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
     <a href="/" class="btn bg-blue-500 text-white p-2">Back to Home</a>
+    <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={copyCode}>Copy Code</button>
 
     {#if view_data.revisions.at(-1)}
     <!-- Tab buttons -->
@@ -163,4 +164,15 @@ function switchTab(tabName) {
     }
     console.log(view_data)
 })()
+
+function copyCode() {
+    const code = view_data.revisions.at(-1)?.code || '';
+    if (code) {
+        navigator.clipboard.writeText(code).then(() => {
+            console.log('Code copied to clipboard!');
+        }).catch(err => {
+            console.error('Error copying code to clipboard:', err);
+        });
+    }
+}
 </script>
