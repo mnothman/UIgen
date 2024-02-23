@@ -44,17 +44,29 @@
   max-width: 100%; /* Prevents the element from extending beyond its container */
 }
 
-
-
   .revision {
     background-color: #757575; 
     padding: 1rem;
     margin-bottom: 1rem;
   }
 
+  .tab-btn {
+  background-color: #e2e8f0; 
+  border: none;
+  padding: 8px 16px;
+  margin: 0 4px;
+  cursor: pointer;
+}
+
+.tab-btn:focus {
+  outline: none;
+}
+
+.tab-btn:hover {
+  background-color: #cbd5e1; 
+}
 
 </style>
-
 <div class="container">
   <!-- History of chats on the left -->
   <div class="history">
@@ -68,13 +80,25 @@
     {/each}
   </div>
 
+  <!-- display of rendered code and raw code, buttons  -->
   <div class="current">
     <input type="text" id="prompt" placeholder="Enter your prompt here" class="input bg-gray-100 p-2">
     <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
+    <a href="/" class="btn bg-blue-500 text-white p-2">Back to Home</a>
 
     {#if view_data.revisions.at(-1)}
-      <iframe srcdoc={'<script src=https://cdn.tailwindcss.com></script>\n' + view_data.revisions.at(-1).code} class="w-full h-[20rem] border m-5 shadow-2xl" title/>
-      <pre>{view_data.revisions.at(-1).code}</pre>
+    <!-- Tab buttons -->
+    <div class="tab-buttons">
+        <button on:click={() => switchTab('rendered')} class="tab-btn">Rendered Display</button>
+        <button on:click={() => switchTab('raw')} class="tab-btn">Raw Code</button>
+    </div>
+  
+    <!-- Conditional rendering based on the current tab -->
+    {#if $currentTab === 'rendered'}
+        <iframe srcdoc={'<script src=https://cdn.tailwindcss.com></script>\n' + view_data.revisions.at(-1).code} class="w-full h-[20rem] border m-5 shadow-2xl" title="Rendered Code"></iframe>
+    {:else if $currentTab === 'raw'}
+        <pre>{view_data.revisions.at(-1).code}</pre>
+    {/if}
     {/if}
   </div>
 </div>
@@ -83,7 +107,7 @@
 <script>
 import * as kv from 'idb-keyval'
 import {openai} from './store.js'
-
+import { writable } from 'svelte/store';
 
 //when button clicked, triggers genui function, takes user input, sends to openai, and returns the response
 async function genui() {
@@ -124,6 +148,12 @@ async function genui() {
 export let id
 let view_data = {id, revisions: []}
 let is_new = false
+const currentTab = writable('rendered'); // Default to showing the rendered code
+function switchTab(tabName) {
+    currentTab.set(tabName);
+}
+
+
 
 ;(async () => {
     view_data = await kv.get('view_' + id)
