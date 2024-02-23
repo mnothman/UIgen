@@ -148,7 +148,7 @@ async function genui() {
 export let id
 let view_data = {id, revisions: []}
 let is_new = false
-const currentTab = writable('rendered'); // Default to showing the rendered code
+const currentTab = writable('rendered'); 
 function switchTab(tabName) {
     currentTab.set(tabName);
 }
