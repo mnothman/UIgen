@@ -87,6 +87,13 @@
     <a href="/" class="btn bg-blue-500 text-white p-2">Back to Home</a>
     <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={copyCode}>Copy Code</button>
 
+    {#if $isLoading}
+
+    <div class="loading-spinner">
+      <p>Loading...</p>
+    </div>  
+    {/if}
+
     {#if view_data.revisions.at(-1)}
     <!-- Tab buttons -->
     <div class="tab-buttons">
@@ -112,9 +119,12 @@ import { writable } from 'svelte/store';
 
 //when button clicked, triggers genui function, takes user input, sends to openai, and returns the response
 async function genui() {
+    isLoading.set(true);
     let prompt = document.getElementById('prompt').value
     let fullPrompt = prompt
     const system_prompt = 'You are a helpful assistant. You create html and tailwind css from a chat. Use only Tailwind for styling. Only respond with HTML! Do not explain anything.'
+    
+    try{
     const prev_code = view_data.revisions.at(-1)?.code || ''
     if (prev_code) {
         fullPrompt = `${prompt}; apply the change to the following code:\n${prev_code}`
@@ -143,10 +153,15 @@ async function genui() {
 
     console.log(newRevision.code);
     view_data = { ...view_data, revisions: [...view_data.revisions] };
-
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
+    isLoading.set(false); // Reset loading state
+  }
  }
 
 export let id
+let isLoading = writable(false);
 let view_data = {id, revisions: []}
 let is_new = false
 const currentTab = writable('rendered'); 
