@@ -11,18 +11,23 @@
 <div>Past revisions</div>
 
 <div class="grid-container">
-    {#each views as view}
-        <div class="grid-item">
-            <a href="/view/{view.id}">
-                <p>{view.revisions[0].prompt}</p>
+    {#each sortedViews as view}
+    <!-- {#each views as view} -->
+    <div class="grid-item">
+        <a href="/view/{view.id}">
+                            <!-- <iframe  /> and /or <div class="rendered-code">...</div> -->
+
                 <!-- place holder for rendered code-->
-                <!-- <iframe  /> and /or <div class="rendered-code">...</div> -->
-                {@html view.revisions[0].code} <!-- Assuming `code` contains the HTML to render -->
-                <span>{view.revisions.length} revisions</span>
-                <span>{new Date(view.revisions[0].timestamp).toLocaleString()}</span>
-            </a>
-        </div>
-    {/each}
+                {#if view.revisions.some(rev => rev.isFavorite)}
+                <span>⭐</span>
+            {/if}
+            <p>{view.revisions[0].prompt}</p>
+            {@html view.revisions[0].code} 
+            <span>{view.revisions.length} revisions</span>
+            <span>{new Date(view.revisions[0].timestamp).toLocaleString()}</span>
+        </a>
+    </div>
+{/each}
 </div>
 
 <script>
@@ -40,6 +45,14 @@ function new_view() {
     const id = Date.now();
     router.goto('/view/' + id);
 }
+
+$: sortedViews = views.sort((a, b) => {
+  const aFav = a.revisions.some(rev => rev.isFavorite) ? 1 : 0;
+  const bFav = b.revisions.some(rev => rev.isFavorite) ? 1 : 0;
+  return bFav - aFav || b.revisions[0].timestamp - a.revisions[0].timestamp;
+});
+
+
 </script>
 
 <style>

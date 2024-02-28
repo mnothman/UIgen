@@ -9,9 +9,9 @@
 
   .history {
     /* flex-basis: 30%; */
-    width: 240px;
+    width: 255px;
     overflow-y: auto;
-    height: 90vh; 
+    height: 100vh; 
   }
 
   /* .current {
@@ -45,9 +45,10 @@
 }
 
   .revision {
-    background-color: #757575; 
+    background-color: #fafafa; 
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: .1rem;
+    margin-top: .1rem;
   }
 
   .tab-btn {
@@ -65,17 +66,34 @@
 .tab-btn:hover {
   background-color: #cbd5e1; 
 }
+  .favorite-btn {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+
+  .favorite-btn.favorited {
+    background-color: #ffc107; /* Or any highlight color */
+    transform: scale(1.1); /* Slightly enlarge the button */
+  }
+
+
 
 </style>
 <div class="container">
   <!-- History of chats on the left -->
   <div class="history">
     <!-- {#each view_data.revisions as revision, index} -->
-    {#each [...view_data.revisions].reverse() as revision, index}
+
+     <!-- makes newest to top -->
+    <!-- {#each [...view_data.revisions].reverse() as revision, index} -->
+
+    <!-- makes favorited first -->
+    {#each [...view_data.revisions].sort((a, b) => b.isFavorite - a.isFavorite || b.timestamp - a.timestamp) as revision, index}
+
       <div class="revision">
         <p><strong>Prompt:</strong> {revision.prompt}</p>
         <p><strong>Timestamp:</strong> {new Date(revision.timestamp).toLocaleString()}</p>
         <!-- somewhere here the html isnt working for the current page -->
+
       </div>
     {/each}
   </div>
@@ -86,6 +104,12 @@
     <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
     <a href="/" class="btn bg-blue-500 text-white p-2">Back to Home</a>
     <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={copyCode}>Copy Code</button>
+    <!-- <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={toggleFavorite}>Favorite *</button> -->
+    <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={toggleFavorite}>
+      {#if view_data.revisions.at(-1)?.isFavorite}Unfavorite{/if}
+      {#if !view_data.revisions.at(-1)?.isFavorite}Favorite ⭐{/if}
+    </button>
+
 
     {#if $isLoading}
 
@@ -142,6 +166,7 @@ async function genui() {
         timestamp: Date.now(),
         prompt,
         code: response.choices[0].message.content,
+        isFavorite: false, 
     };
     newRevision.code = newRevision.code.replace(/^```html\n/, '').replace(/\n```\s*$/, '');
 
@@ -189,5 +214,23 @@ function copyCode() {
             console.error('Error copying code to clipboard:', err);
         });
     }
+}
+
+
+// function toggleFavorite() {
+//   const currentRevision = view_data.revisions.at(-1);
+//   if (currentRevision) {
+//     currentRevision.isFavorite = !currentRevision.isFavorite;
+//     kv.set('view_' + id, view_data);
+//     //make animation and change button text here
+//   }
+// }
+function toggleFavorite() {
+  const currentRevision = view_data.revisions.at(-1);
+  if (currentRevision) {
+    currentRevision.isFavorite = !currentRevision.isFavorite;
+    kv.set('view_' + id, view_data); //persistance to indexedDB
+    view_data = { ...view_data }; //for reactivity
+  }
 }
 </script>
