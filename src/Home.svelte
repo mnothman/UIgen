@@ -1,21 +1,22 @@
-<!--home page with list of revisions -->
-{#if !$state.api_key}
-  <button class="btn" on:click={() => $state.api_key = window.prompt('Enter your OpenAI API key')}>Set Key</button>
-{/if}
-{#if $state.api_key}
-  <button class="btn" on:click={() => $state.api_key = window.prompt('Change your OpenAI API key')}>Change Key</button>
-{/if}
-
-<button class="btn" on:click={new_view}>New Chat</button>
-
-<div>Past revisions</div>
+<header>
+    <h1>Revision History</h1>
+    <div>
+        {#if !$state.api_key}
+        <button class="btn" on:click={() => $state.api_key = window.prompt('Enter your OpenAI API key')}>Set Key</button>
+        {/if}
+        {#if $state.api_key}
+        <button class="btn" on:click={() => $state.api_key = window.prompt('Change your OpenAI API key')}>Change Key</button>
+        {/if}
+        <button class="btn" on:click={new_view}>New Chat</button>
+    </div>
+</header>
 
 <div class="grid-container">
     {#each sortedViews as view}
     <!-- {#each views as view} -->
     <div class="grid-item">
         <a href="/view/{view.id}">
-                            <!-- <iframe  /> and /or <div class="rendered-code">...</div> -->
+                <!-- <iframe  /> and /or <div class="rendered-code">...</div> -->
 
                 <!-- place holder for rendered code-->
                 {#if view.revisions.some(rev => rev.isFavorite)}
@@ -56,60 +57,97 @@ $: sortedViews = views.sort((a, b) => {
 </script>
 
 <style>
-
-
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-    gap: 1rem;
-    padding: 1rem;
-}
-
-.grid-item {
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f4f8;
+    }
+    
+    .btn {
+        background-color: #007bff;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+        background-color: #0056b3;
+    }
+    
+    /* Improved layout and typography for the header */
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    header > div {
+        display: flex;
+        gap: 10px;
+    }
+    
+    h1 {
+        font-size: 24px;
+        color: #333;
+    }
+    
+    /* Grid and item styling adjustments */
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); 
+        gap: 20px;
+        padding: 1rem;
+    }
+    
+    .grid-item {
     border: 1px solid #ccc;
-    padding: 1rem;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    
-    /* Set fixed dimensions */
-    width: 260px; /* Adjust width as needed */
-    height: 250px; /* Adjust height as needed */
-    
-    /* Handling overflow */
-    overflow: hidden; /* Hide overflow. Alternatively, use 'auto' to add scrollbars */
-    
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden; /* Keeps the content within the boundaries */
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s; /* Smooth transition for hover effect */
+    position: relative; /* Ensures that the layout is maintained */
+    height: auto; /* Adjust height automatically based on content */
 }
 
-.grid-item a {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    overflow: hidden; /* Ensures that content does not overflow the link boundary */
-}
-
-.rendered-code, iframe {
-    max-height: 100%; /* Adjust based on your needs */
-    overflow: auto; /* Adds a scrollbar if content exceeds this height */
-}
-
-/* Additional styles for text truncation and layout */
-.grid-item p, .grid-item span {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Adjustments for rendered code to ensure it fits within the layout */
-.rendered-code {
-    font-size: 0.75rem; /* Smaller font size for code */
-    white-space: nowrap; /* Adjust based on preference */
-    overflow-x: auto; /* Horizontal scrolling for single lines of code */
-}
-
-
-
-</style>
+    .grid-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .grid-item a {
+        color: inherit;
+        text-decoration: none;
+    }
+    
+    .grid-item p, .grid-item span {
+        margin: 5px 0;
+    }
+    
+    /* Star and Revisions styling */
+    .grid-item span:first-child {
+        font-size: 20px;
+        line-height: 1;
+    }
+    
+    /* Date and revisions count */
+    .grid-item span:last-child {
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    </style>
+    
