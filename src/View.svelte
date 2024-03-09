@@ -76,7 +76,6 @@
   }
 
 
-
 </style>
 <div class="container">
   <!-- History of chats on the left -->
@@ -216,15 +215,6 @@ function copyCode() {
     }
 }
 
-
-// function toggleFavorite() {
-//   const currentRevision = view_data.revisions.at(-1);
-//   if (currentRevision) {
-//     currentRevision.isFavorite = !currentRevision.isFavorite;
-//     kv.set('view_' + id, view_data);
-//     //make animation and change button text here
-//   }
-// }
 function toggleFavorite() {
   const currentRevision = view_data.revisions.at(-1);
   if (currentRevision) {
