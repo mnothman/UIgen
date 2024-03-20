@@ -87,14 +87,17 @@
 
     <!-- makes favorited first -->
     {#each [...view_data.revisions].sort((a, b) => b.isFavorite - a.isFavorite || b.timestamp - a.timestamp) as revision, index}
+    <!-- <div class="revision"> -->
+      <button type="button" class="revision" on:click={() => selectRevision(revision.timestamp)} on:keydown={(event) => handleKeyDown(event, index)}>
 
-      <div class="revision">
-        <p><strong>Prompt:</strong> {revision.prompt}</p>
-        <p><strong>Timestamp:</strong> {new Date(revision.timestamp).toLocaleString()}</p>
-        <!-- somewhere here the html isnt working for the current page -->
+      <p><strong>Prompt:</strong> {revision.prompt}</p>
+      <p><strong>Timestamp:</strong> {new Date(revision.timestamp).toLocaleString()}</p>
+      <!-- somewhere here the html isnt working for the current page -->
+      </button>
 
-      </div>
-    {/each}
+      <!-- WHEN CLICKING FAVORITE AND UNFAVORITE IT CHANGES AROUND THE REVISION HISTORY  -->
+    <!-- </div> -->
+  {/each}
   </div>
 
   <!-- display of rendered code and raw code, buttons  -->
@@ -216,11 +219,68 @@ function copyCode() {
 }
 
 function toggleFavorite() {
-  const currentRevision = view_data.revisions.at(-1);
+  // const currentRevision = view_data.revisions.at(-1);
+  // const allRevisions = view_data.revisions;
+  // if (currentRevision) {
+  //   currentRevision.isFavorite = !currentRevision.isFavorite;
+  //   allRevisions.isFavorite = !allRevisions.isFavorite;
+  //   kv.set('view_' + id, view_data); //persistance to indexedDB
+  //   view_data = { ...view_data }; //for reactivity
+  // }
+  // previous code does not account for the last most data revision being changed to one that is false, since we only changed the top to true and vice versa
+  const currentRevisionIndex = view_data.revisions.length - 1; // Last item
+  const currentRevision = view_data.revisions[currentRevisionIndex];
+  
   if (currentRevision) {
+    //toggle the favorite status of the currentRevision
     currentRevision.isFavorite = !currentRevision.isFavorite;
-    kv.set('view_' + id, view_data); //persistance to indexedDB
-    view_data = { ...view_data }; //for reactivity
+
+    // Now toggle the favorite status of all other revisions
+    view_data.revisions.forEach((revision, index) => {
+      if (index !== currentRevisionIndex) { // Skip the currentRevision
+        revision.isFavorite = currentRevision.isFavorite; // Apply the currentRevision's new favorite status to all others
+      }
+    });
+
+    //persist the updated revisions array to IndexedDB
+    kv.set('view_' + id, view_data);
+
+    // update view_data to trigger Svelte reactivity
+    view_data = { ...view_data, revisions: [...view_data.revisions] };
+  }
+}
+
+
+// HAVE TO CHANGE THE WAY THAT WE DEAL WITH CURRENT REVISIONS BECASUE WE STILL WOULD BE INPUTTING THE MOST RECENT CODE IN THE PROMPT INSTEAD OF THE CURRENT REVISION, HAVE TO ADD AN IF STATEMENT
+function selectRevision(timestamp) {
+  // find the revision by timestamp
+  const revisionIndex = view_data.revisions.findIndex(revision => revision.timestamp === timestamp);
+  
+  if (revisionIndex === -1) return; // Exit if no revision matches the timestamp
+  
+  // retrieve  selected revision
+  const selectedRevision = view_data.revisions.splice(revisionIndex, 1)[0];
+  
+  // move the selected revision to the top/start of the array
+  view_data.revisions.unshift(selectedRevision);
+  
+  //ui changes
+  view_data = { ...view_data, revisions: [...view_data.revisions] };
+  
+  // Persist changes indexb
+  kv.set('view_' + id, view_data);
+  view_data = { ...view_data, revisions: [...view_data.revisions] }; //need this for updating reactivity so that it can dispaly 
+
+}
+
+
+
+function handleKeyDown(event, index) {
+//needed for ally error
+  if (event.key === 'Enter') {
+    selectRevision(index);
   }
 }
 </script>
+
+
