@@ -79,24 +79,16 @@
 </style>
 <div class="container">
   <!-- History of chats on the left -->
+  <!-- history needs to be for the current prompt which is clicked on, and then it is sorted by time stamps -->
   <div class="history">
-    <!-- {#each view_data.revisions as revision, index} -->
+    <!-- {#each [...view_data.revisions].sort((a, b) => b.isFavorite - a.isFavorite || b.timestamp - a.timestamp) as revision, index} -->
+    {#each sortedRevisions as revision, index}
 
-     <!-- makes newest to top -->
-    <!-- {#each [...view_data.revisions].reverse() as revision, index} -->
-
-    <!-- makes favorited first -->
-    {#each [...view_data.revisions].sort((a, b) => b.isFavorite - a.isFavorite || b.timestamp - a.timestamp) as revision, index}
-    <!-- <div class="revision"> -->
       <button type="button" class="revision" on:click={() => selectRevision(revision.timestamp)} on:keydown={(event) => handleKeyDown(event, index)}>
 
       <p><strong>Prompt:</strong> {revision.prompt}</p>
       <p><strong>Timestamp:</strong> {new Date(revision.timestamp).toLocaleString()}</p>
-      <!-- somewhere here the html isnt working for the current page -->
       </button>
-
-      <!-- WHEN CLICKING FAVORITE AND UNFAVORITE IT CHANGES AROUND THE REVISION HISTORY  -->
-    <!-- </div> -->
   {/each}
   </div>
 
@@ -121,6 +113,11 @@
     {/if}
 
     {#if view_data.revisions.at(-1)}
+<!-- display current prompt -->
+    <div class="current-prompt">
+      <strong>Current Prompt:</strong> {view_data.revisions.at(-1).prompt}
+    </div>
+
     <!-- Tab buttons -->
     <div class="tab-buttons">
         <button on:click={() => switchTab('rendered')} class="tab-btn">Rendered Display</button>
@@ -191,6 +188,7 @@ export let id
 let isLoading = writable(false);
 let view_data = {id, revisions: []}
 let is_new = false
+let sortedRevisions = [];
 const currentTab = writable('rendered'); 
 function switchTab(tabName) {
     currentTab.set(tabName);
@@ -228,7 +226,7 @@ function toggleFavorite() {
   //   view_data = { ...view_data }; //for reactivity
   // }
   // previous code does not account for the last most data revision being changed to one that is false, since we only changed the top to true and vice versa
-  const currentRevisionIndex = view_data.revisions.length - 1; // Last item
+  const currentRevisionIndex = view_data.revisions.length - 1; // Last item 
   const currentRevision = view_data.revisions[currentRevisionIndex];
   
   if (currentRevision) {
@@ -258,11 +256,12 @@ function selectRevision(timestamp) {
   
   if (revisionIndex === -1) return; // Exit if no revision matches the timestamp
   
-  // retrieve  selected revision
+  // retrieve  selected revision 
   const selectedRevision = view_data.revisions.splice(revisionIndex, 1)[0];
-  
-  // move the selected revision to the top/start of the array
-  view_data.revisions.unshift(selectedRevision);
+  view_data.revisions.push(selectedRevision); // Move it to the end to be the current revision
+
+  // move the selected revision to the top/start of the array THIS WAS TO MAKE IT GO TO THE ZERO INDEX WHICH IS WRONG
+  // view_data.revisions.unshift(selectedRevision);
   
   //ui changes
   view_data = { ...view_data, revisions: [...view_data.revisions] };
@@ -281,6 +280,19 @@ function handleKeyDown(event, index) {
     selectRevision(index);
   }
 }
+
+
+function sortRevisions() {
+    const currentRevision = view_data.revisions.at(-1);
+    const otherRevisions = view_data.revisions.slice(0, -1).sort((a, b) => b.timestamp - a.timestamp);
+    sortedRevisions = [currentRevision, ...otherRevisions];
+  }
+//reactive, make changes whenever done
+  $: if (view_data.revisions.length) {
+    sortRevisions();
+  }
+
+
 </script>
 
 
