@@ -1,82 +1,3 @@
-<style>
-  .container {
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-    /* height: 90vh; Adjust the height of the container to take up most of the viewport height */
-
-  }
-
-  .history {
-    /* flex-basis: 30%; */
-    width: 255px;
-    overflow-y: auto;
-    height: 100vh; 
-  }
-
-  /* .current {
-    flex-grow: 1;
-    width: calc(100% - 180px - 1rem);
-  } */
-.current {
-  flex-grow: 1;
-  width: calc(100% - 240px - 1rem); /* Adjusted to account for the fixed width of the history panel */
-  overflow: hidden; /* Prevents overflow outside this container */
-  position: relative; /*Establishes a positioning context for absolutely positioned children if needed */
-}
-
-.current > div, .current > pre {
-  max-height: 80vh; /* Adjust based on your needs to control the height */
-  overflow: auto; /* Makes content scrollable if it exceeds the container's bounds */
-  padding: 1rem;
-  background-color: #f3f4f6; /* Matches the existing style for consistency */
-  margin-bottom: 1rem; /* Space between elements */
-}
-
-.current > div {
-  width: 100%; /* Ensures the div takes up the full width of its parent */
-  box-sizing: border-box; /* Includes padding and border in the element's total width and height */
-}
-
-.current > pre {
-  white-space: pre-wrap; /* Ensures that data is wrapped within the container */
-  word-wrap: break-word; /* Breaks long words to prevent horizontal scrolling */
-  max-width: 100%; /* Prevents the element from extending beyond its container */
-}
-
-  .revision {
-    background-color: #fafafa; 
-    padding: 1rem;
-    margin-bottom: .1rem;
-    margin-top: .1rem;
-  }
-
-  .tab-btn {
-  background-color: #e2e8f0; 
-  border: none;
-  padding: 8px 16px;
-  margin: 0 4px;
-  cursor: pointer;
-}
-
-.tab-btn:focus {
-  outline: none;
-}
-
-.tab-btn:hover {
-  background-color: #cbd5e1; 
-}
-  .favorite-btn {
-    transition: transform 0.3s ease, background-color 0.3s ease;
-  }
-
-  .favorite-btn.favorited {
-    background-color: #ffc107; /* Or any highlight color */
-    transform: scale(1.1); /* Slightly enlarge the button */
-  }
-
-
-</style>
 <div class="container">
   <!-- History of chats on the left -->
   <!-- history needs to be for the current prompt which is clicked on, and then it is sorted by time stamps -->
@@ -94,7 +15,7 @@
 
   <!-- display of rendered code and raw code, buttons  -->
   <div class="current">
-    <input type="text" id="prompt" placeholder="Enter your prompt here" class="input bg-gray-100 p-2">
+    <input type="text" id="prompt" placeholder="Enter your prompt here" class="input bg-gray-100 p-2" on:keydown={handleEnterPress}>
     <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
     <a href="/" class="btn bg-blue-500 text-white p-2">Back to Home</a>
     <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={copyCode}>Copy Code</button>
@@ -128,8 +49,8 @@
     {#if $currentTab === 'rendered'}
         <iframe srcdoc={'<script src=https://cdn.tailwindcss.com></script>\n' + view_data.revisions.at(-1).code} class="w-full h-[20rem] border m-5 shadow-2xl" title="Rendered Code"></iframe>
     {:else if $currentTab === 'raw'}
-        <pre>{view_data.revisions.at(-1).code}</pre>
-    {/if}
+    <pre>{view_data.revisions.at(-1).code}</pre>
+        {/if}
     {/if}
   </div>
 </div>
@@ -292,7 +213,88 @@ function sortRevisions() {
     sortRevisions();
   }
 
+// for pressing enter to submit
+  function handleEnterPress(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      genui();
+    }
+  }
+
 
 </script>
 
 
+<style>
+
+  .container {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    /* height: 90vh; Adjust the height of the container to take up most of the viewport height */
+
+  }
+
+  .history {
+    /* flex-basis: 30%; */
+    width: 255px;
+    overflow-y: auto;
+    height: 100vh; 
+  }
+
+  /* .current {
+    flex-grow: 1;
+    width: calc(100% - 180px - 1rem);
+  } */
+.current {
+  flex-grow: 1;
+  width: calc(100% - 240px - 1rem); /* Adjusted to account for the fixed width of the history panel */
+  overflow: hidden; /* Prevents overflow outside this container */
+  position: relative; /*Establishes a positioning context for absolutely positioned children if needed */
+}
+
+.current > div, .current > pre {
+  max-height: 80vh; /* Adjust based on your needs to control the height */
+  overflow: auto; /* Makes content scrollable if it exceeds the container's bounds */
+  padding: 1rem;
+  background-color: #f3f4f6; /* Matches the existing style for consistency */
+  margin-bottom: 1rem; /* Space between elements */
+}
+
+.current > div {
+  width: 100%; /* Ensures the div takes up the full width of its parent */
+  box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+}
+
+.current > pre {
+  white-space: pre-wrap; /* Ensures that data is wrapped within the container */
+  word-wrap: break-word; /* Breaks long words to prevent horizontal scrolling */
+  max-width: 100%; /* Prevents the element from extending beyond its container */
+}
+
+  .revision {
+    background-color: #fafafa; 
+    padding: 1rem;
+    margin-bottom: .1rem;
+    margin-top: .1rem;
+  }
+
+  .tab-btn {
+  background-color: #e2e8f0; 
+  border: none;
+  padding: 8px 16px;
+  margin: 0 4px;
+  cursor: pointer;
+}
+
+.tab-btn:focus {
+  outline: none;
+}
+
+.tab-btn:hover {
+  background-color: #cbd5e1; 
+}
+
+
+
+</style>
