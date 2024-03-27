@@ -15,16 +15,24 @@
 
   <!-- display of rendered code and raw code, buttons  -->
   <div class="current">
-    <input type="text" id="prompt" placeholder="Enter your prompt here" class="input bg-gray-100 p-2" on:keydown={handleEnterPress}>
+    <input type="text" id="prompt" placeholder="Enter your prompt here" class="input-prompt" on:keydown={handleEnterPress}>
     <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
     <a href="/" class="btn bg-blue-500 text-white p-2">Back to Home</a>
-    <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={copyCode}>Copy Code</button>
-    <!-- <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={toggleFavorite}>Favorite *</button> -->
+
+    <!-- <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={copyCode}>Copy Code</button>
     <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={toggleFavorite}>
       {#if view_data.revisions.at(-1)?.isFavorite}Unfavorite{/if}
       {#if !view_data.revisions.at(-1)?.isFavorite}Favorite ⭐{/if}
-    </button>
+    </button> -->
 
+    <!-- if theres no data in the revisions array it means theres a new chat, so dont need copy code or favorite button -->
+    {#if view_data.revisions.length > 0} 
+        <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={copyCode}>Copy Code</button>
+        <button class="copy-code-btn btn bg-blue-500 text-white p-2" on:click={toggleFavorite}>
+          {#if view_data.revisions.at(-1)?.isFavorite}Unfavorite{/if}
+          {#if !view_data.revisions.at(-1)?.isFavorite}Favorite ⭐{/if}
+        </button>
+    {/if}
 
     {#if $isLoading}
 
@@ -295,6 +303,25 @@ function sortRevisions() {
   background-color: #cbd5e1; 
 }
 
+.btn {
+    background-color: #007bff; /* Blue background */
+    color: rgb(83, 81, 81); /* White text */
+    padding: 10px 25px; /* Padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* No underline */
+    display: inline-block; /* Allows setting dimensions */
+    font-size: 16px; /* Text size */
+    cursor: pointer; /* Cursor appearance */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth color transition */
+    border: none; /* No border */
+}
 
+.input-prompt {
+    margin-top: 1rem; /* Space below the prompt */
+    margin-bottom: 1rem; /* Keeps the original space below the prompt */
+    padding: 8px 20px; /* Adjusts padding to make the input box smaller */
+    font-size: 16.4px;
+  }
 
 </style>

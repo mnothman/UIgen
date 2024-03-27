@@ -57,26 +57,37 @@ $: sortedViews = views.sort((a, b) => {
 </script>
 
 <style>
+    header h1 {
+        font-weight: bold; 
+        text-align: left; 
+        margin-left: 40px; 
+        margin-top: 20px;
+        font-size: 50px; 
+    }
+        
+/* 
     body {
         font-family: 'Arial', sans-serif;
         margin: 0;
         padding: 20px;
         background-color: #f0f4f8;
-    }
+    } */
     
     .btn {
         background-color: #007bff;
         border: none;
-        color: white;
-        padding: 10px 20px;
+        color: rgb(0, 0, 0);
+        padding: 10px 25px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
-        margin: 4px 2px;
+        margin: 25px 4px 4px;
         cursor: pointer;
         border-radius: 5px;
         transition: background-color 0.3s;
+        position: relative;
+        left: -20px;
     }
     
     .btn:hover {
