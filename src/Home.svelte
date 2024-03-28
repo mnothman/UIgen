@@ -23,7 +23,8 @@
                 <span>⭐</span>
             {/if}
             <p>{view.revisions[0].prompt}</p>
-            {@html view.revisions[0].code} 
+            <div class="rendered-code">
+            {@html view.revisions[0].code} </div>
             <span>{view.revisions.length} revisions</span>
             <span>{new Date(view.revisions[0].timestamp).toLocaleString()}</span>
         </a>
@@ -53,8 +54,10 @@ $: sortedViews = views.sort((a, b) => {
   return bFav - aFav || b.revisions[0].timestamp - a.revisions[0].timestamp;
 });
 
-
 </script>
+
+
+
 
 <style>
     header h1 {
@@ -75,13 +78,13 @@ $: sortedViews = views.sort((a, b) => {
     
     .btn {
         background-color: #007bff;
-        border: none;
+        /* border: none; */
         color: rgb(0, 0, 0);
         padding: 10px 25px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
-        font-size: 16px;
+        /* font-size: 16px; */
         margin: 25px 4px 4px;
         cursor: pointer;
         border-radius: 5px;
@@ -99,19 +102,19 @@ $: sortedViews = views.sort((a, b) => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
+        /* margin-bottom: 20px; */
     }
-    
+/*     
     header > div {
         display: flex;
         gap: 10px;
-    }
+    } */
     
-    h1 {
+    /* h1 {
         font-size: 24px;
         color: #333;
     }
-    
+     */
     /* Grid and item styling adjustments */
     .grid-container {
         display: grid;
@@ -126,6 +129,8 @@ $: sortedViews = views.sort((a, b) => {
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     border-radius: 8px;
+    max-height: 500px;
+    min-width: 2px;
     overflow: hidden; /* Keeps the content within the boundaries */
     display: flex;
     flex-direction: column;
@@ -144,10 +149,12 @@ $: sortedViews = views.sort((a, b) => {
         text-decoration: none;
     }
     
-    .grid-item p, .grid-item span {
-        margin: 5px 0;
-    }
-    
+/* .grid-item p, .grid-item span, .rendered-code { */
+    /* font-size: larger; Adjust as needed */
+/* } */
+
+
+
     /* Star and Revisions styling */
     .grid-item span:first-child {
         font-size: 20px;
@@ -160,5 +167,12 @@ $: sortedViews = views.sort((a, b) => {
         color: #666;
     }
     
+    .rendered-code {
+    font-size: smaller; /* Adjust the font size to ensure better fit */
+    overflow: hidden; /* Prevents the code from overflowing */
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
     </style>
     

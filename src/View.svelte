@@ -43,7 +43,7 @@
 
     {#if view_data.revisions.at(-1)}
 <!-- display current prompt -->
-    <div class="current-prompt">
+    <div class="current-prompt-container">
       <strong>Current Prompt:</strong> {view_data.revisions.at(-1).prompt}
     </div>
 
@@ -55,7 +55,7 @@
   
     <!-- Conditional rendering based on the current tab -->
     {#if $currentTab === 'rendered'}
-        <iframe srcdoc={'<script src=https://cdn.tailwindcss.com></script>\n' + view_data.revisions.at(-1).code} class="w-full h-[20rem] border m-5 shadow-2xl" title="Rendered Code"></iframe>
+        <iframe srcdoc={'<script src=https://cdn.tailwindcss.com></script>\n' + view_data.revisions.at(-1).code} class="w-full h-[29rem] border m-7 shadow-2xl" title="Rendered Code"></iframe>
     {:else if $currentTab === 'raw'}
     <pre>{view_data.revisions.at(-1).code}</pre>
         {/if}
@@ -69,13 +69,29 @@ import * as kv from 'idb-keyval'
 import {openai} from './store.js'
 import { writable } from 'svelte/store';
 
+document.addEventListener('DOMContentLoaded', (event) => {
+    const examples = [
+        "Build a simple, intuitive recipe page layout for a cooking website.",
+        "Invent a futuristic control panel UI for smart home devices.",
+        "Develop a sleek profile page UI for a professional networking site.",
+        "Example prompt 4",
+        "Example prompt 5",
+        "Example prompt 6",
+        "Example prompt 7",
+        "Example prompt 8",
+        "Example prompt 9",
+        "Example prompt 10"
+    ];
+    const randomExample = examples[Math.floor(Math.random() * examples.length)];
+    document.getElementById('prompt').placeholder = randomExample;
+});
 //when button clicked, triggers genui function, takes user input, sends to openai, and returns the response
 async function genui() {
     isLoading.set(true);
     let prompt = document.getElementById('prompt').value
     let fullPrompt = prompt
-    const system_prompt = 'You are a helpful assistant. You create html and tailwind css from a chat. Use only Tailwind for styling. Only respond with HTML! Do not explain anything.'
-    
+    // const system_prompt = 'You are a helpful assistant. You create html and tailwind css from a chat. Use only Tailwind for styling. Only respond with HTML! Do not explain anything.'
+    const system_prompt = 'You are a helpful assistant skilled in web design, focusing on creating HTML structures styled with Tailwind CSS. Your task is to generate the HTML for complete website designs that are responsive, adhering to modern web standards. All styling should be achieved using Tailwind CSS classes, aiming for a clean, accessible, and visually appealing outcome. If needed the sites you design should include a navigation bar, homepage content, about section, contact form, and footer. Ensure the layout is responsive, catering to mobile, tablet, and desktop views. Keep the design intuitive for users, incorporating basic accessibility features where possible. Only provide the HTML and Tailwind CSS code necessary for these designs, without any explanations.'
     try{
     const prev_code = view_data.revisions.at(-1)?.code || ''
     if (prev_code) {
@@ -235,28 +251,26 @@ function sortRevisions() {
 
 <style>
 
+
   .container {
     display: flex;
     gap: 1rem;
     width: 100%;
-    /* height: 90vh; Adjust the height of the container to take up most of the viewport height */
-
+    background-color: #fdfdfd; /* changes the entire background behind everything*/
+    /* height: 90vh;  */
   }
 
   .history {
-    /* flex-basis: 30%; */
     width: 255px;
     overflow-y: auto;
     height: 100vh; 
   }
 
-  /* .current {
-    flex-grow: 1;
-    width: calc(100% - 180px - 1rem);
-  } */
+
 .current {
   flex-grow: 1;
-  width: calc(100% - 240px - 1rem); /* Adjusted to account for the fixed width of the history panel */
+  background-color: #fdfdfd;
+  width: calc(100% - 240px - 1rem); /*Adjusted to account for the fixed width of the history panel */
   overflow: hidden; /* Prevents overflow outside this container */
   position: relative; /*Establishes a positioning context for absolutely positioned children if needed */
 }
@@ -265,7 +279,7 @@ function sortRevisions() {
   max-height: 80vh; /* Adjust based on your needs to control the height */
   overflow: auto; /* Makes content scrollable if it exceeds the container's bounds */
   padding: 1rem;
-  background-color: #f3f4f6; /* Matches the existing style for consistency */
+  background-color: #fcfcfc; /* fcfcfc THESE CHANGE THE TWO LINES WITH CURRENT PROMPT AND 2 BUTTONS */
   margin-bottom: 1rem; /* Space between elements */
 }
 
@@ -281,14 +295,14 @@ function sortRevisions() {
 }
 
   .revision {
-    background-color: #fafafa; 
+    background-color: #fdfdfd; 
     padding: 1rem;
     margin-bottom: .1rem;
     margin-top: .1rem;
   }
 
   .tab-btn {
-  background-color: #e2e8f0; 
+  background-color: #fdfdfd; 
   border: none;
   padding: 8px 16px;
   margin: 0 4px;
@@ -300,7 +314,7 @@ function sortRevisions() {
 }
 
 .tab-btn:hover {
-  background-color: #cbd5e1; 
+  background-color: #fdfdfd; 
 }
 
 .btn {
@@ -323,5 +337,50 @@ function sortRevisions() {
     padding: 8px 20px; /* Adjusts padding to make the input box smaller */
     font-size: 16.4px;
   }
+
+
+  .tab-btn {
+  background-color: #fdfdfd;
+  border: none;
+  padding: 8px 16px;
+  margin: 0 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+.tab-buttons{
+  background-color: #fdfdfd;
+  border: none;
+  padding: 8px 16px;
+  margin: 0 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+.history {
+  width: 255px;
+  overflow-y: auto;
+  height: 100vh;
+  background-color: #fdfdfd;
+  box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+.current-prompt-container {
+  background-color: #fdfdfd;
+  border: none;
+  padding: 8px 16px;
+  margin: 0 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+
+
+/* .revision {
+    background-color: #fdfdfd; 
+    padding: 1rem;
+    margin-bottom: .1rem;
+    margin-top: .1rem;
+  } */
 
 </style>
