@@ -15,7 +15,7 @@
 
   <!-- display of rendered code and raw code, buttons  -->
   <div class="current">
-    <input type="text" id="prompt" placeholder="Enter your prompt here" class="input-prompt" on:keydown={handleEnterPress}>
+    <input type="text" id="prompt" placeholder={placeholder} class="input-prompt"  on:keydown={handleEnterPress} bind:value={promptInput}>
     <button on:click={genui} class="btn bg-blue-500 text-white p-2">Input Message</button>
     <a href="/" class="btn bg-blue-500 text-white p-2">Back to Home</a>
 
@@ -53,7 +53,6 @@
         <button on:click={() => switchTab('raw')} class="tab-btn">Raw Code</button>
     </div>
   
-    <!-- Conditional rendering based on the current tab -->
     {#if $currentTab === 'rendered'}
         <iframe srcdoc={'<script src=https://cdn.tailwindcss.com></script>\n' + view_data.revisions.at(-1).code} class="w-full h-[29rem] border m-7 shadow-2xl" title="Rendered Code"></iframe>
     {:else if $currentTab === 'raw'}
@@ -69,9 +68,12 @@ import * as kv from 'idb-keyval'
 import {openai} from './store.js'
 import { writable } from 'svelte/store';
 
-document.addEventListener('DOMContentLoaded', (event) => {
+let promptInput = ''; 
+let placeholder = 'Enter your prompt here';
+
+  function getRandomExample() {
     const examples = [
-        "Build a simple, intuitive recipe page layout for a cooking website.",
+      "Build a simple, intuitive recipe page layout for a cooking website.",
         "Invent a futuristic control panel UI for smart home devices.",
         "Develop a sleek profile page UI for a professional networking site.",
         "Example prompt 4",
@@ -82,16 +84,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
         "Example prompt 9",
         "Example prompt 10"
     ];
-    const randomExample = examples[Math.floor(Math.random() * examples.length)];
-    document.getElementById('prompt').placeholder = randomExample;
-});
+    return examples[Math.floor(Math.random() * examples.length)];
+  }
+
+  onMount(async () => {
+    placeholder = getRandomExample();
+  });
+ 
+
 //when button clicked, triggers genui function, takes user input, sends to openai, and returns the response
 async function genui() {
     isLoading.set(true);
     let prompt = document.getElementById('prompt').value
     let fullPrompt = prompt
     // const system_prompt = 'You are a helpful assistant. You create html and tailwind css from a chat. Use only Tailwind for styling. Only respond with HTML! Do not explain anything.'
-    const system_prompt = 'You are a helpful assistant skilled in web design, focusing on creating HTML structures styled with Tailwind CSS. Your task is to generate the HTML for complete website designs that are responsive, adhering to modern web standards. All styling should be achieved using Tailwind CSS classes, aiming for a clean, accessible, and visually appealing outcome. If needed the sites you design should include a navigation bar, homepage content, about section, contact form, and footer. Ensure the layout is responsive, catering to mobile, tablet, and desktop views. Keep the design intuitive for users, incorporating basic accessibility features where possible. Only provide the HTML and Tailwind CSS code necessary for these designs, without any explanations.'
+    const system_prompt = 'You are a helpful assistant skilled in web design, focusing on creating HTML structures styled with Tailwind CSS. Your task is to generate the HTML for complete website designs that are responsive, adhering to modern web standards. All styling should be achieved using Tailwind CSS classes, aiming for a clean, accessible, and visually appealing outcome. Make it loaded with features, if needed the sites you design should include a navigation bar, homepage content, about section, contact form, and footer. Ensure the layout is responsive, catering to mobile, tablet, and desktop views. Keep the design intuitive for users, incorporating basic accessibility features where possible. Only provide the HTML and Tailwind CSS code necessary for these designs, without any explanations.'
     try{
     const prev_code = view_data.revisions.at(-1)?.code || ''
     if (prev_code) {
@@ -217,15 +224,12 @@ function selectRevision(timestamp) {
 
 }
 
-
-
 function handleKeyDown(event, index) {
 //needed for ally error
   if (event.key === 'Enter') {
     selectRevision(index);
   }
 }
-
 
 function sortRevisions() {
     const currentRevision = view_data.revisions.at(-1);
@@ -245,12 +249,9 @@ function sortRevisions() {
     }
   }
 
-
 </script>
 
-
 <style>
-
 
   .container {
     display: flex;
@@ -265,7 +266,6 @@ function sortRevisions() {
     overflow-y: auto;
     height: 100vh; 
   }
-
 
 .current {
   flex-grow: 1;
@@ -374,13 +374,11 @@ function sortRevisions() {
   box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.2); /* Shadow effect */
 }
 
-
-
-/* .revision {
-    background-color: #fdfdfd; 
+.revision {
+    background-color: #faf9f9; 
     padding: 1rem;
     margin-bottom: .1rem;
     margin-top: .1rem;
-  } */
+  }
 
 </style>
