@@ -8,11 +8,21 @@
     let views = [];
     let showModal = false;
     let pendingDeleteId;
+    let showDeleted = false; //for showing deleted views new
+
+    // (async () => {
+    //     views = (await kv.values()).filter(
+    //         (v) => v.revisions && v.revisions.length,
+    //     );
+    // })();
 
     (async () => {
-        views = (await kv.values()).filter(
-            (v) => v.revisions && v.revisions.length,
-        );
+        views = (await kv.values()).filter(v => v.revisions && v.revisions.length);
+        views.forEach(view => {
+            if (view.deleted === undefined) {
+                view.deleted = false; // for showing deleted views new
+            }
+        });
     })();
 
     function new_view() {
@@ -28,19 +38,45 @@
         );
     });
 
-    function handleDelete(event, viewId) {
+    function toggleDeleted() { // for showing deleted views new
+        showDeleted = !showDeleted;
+    }
+
+
+    async function restoreView(viewId) { // for showing deleted views new
+        views = views.map(view => {
+            if (view.id === viewId) {
+                return { ...view, deleted: false };
+            }
+            return view;
+        });
+        await set("view_" + viewId, views.find(v => v.id === viewId));
+    }
+
+    function handleDelete(event, viewId) { //for fully deleting (do this to clear the view from the deleted views)
         event.preventDefault();
         event.stopPropagation();
         showModal = true;
         pendingDeleteId = viewId;
     }
+//change from delete to going to recyling bin
+    // async function confirmDeletion() {
+    //     views = views.filter((view) => view.id !== pendingDeleteId);
+    //     await del("view_" + pendingDeleteId);
+    //     console.log("Deleted view_" + pendingDeleteId);
+    //     showModal = false;
+    // }
 
     async function confirmDeletion() {
-        views = views.filter((view) => view.id !== pendingDeleteId);
-        await del("view_" + pendingDeleteId);
-        console.log("Deleted view_" + pendingDeleteId);
-        showModal = false;
-    }
+    views = views.map(view => {
+        if (view.id === pendingDeleteId) {
+            return { ...view, deleted: true };
+        }
+        return view;
+    });
+    await kv.set("view_" + pendingDeleteId, views.find(v => v.id === pendingDeleteId));
+    showModal = false;
+}
 
     function cancelDeletion() {
         console.log("Deletion cancelled");
@@ -73,6 +109,9 @@
     </div>
 </header>
 
+
+
+
 <div class="grid-container">
     {#each sortedViews as view}
         <div class="grid-item">
@@ -101,6 +140,31 @@
         </div>
     {/each}
 
+
+    <button class="btn" on:click={toggleDeleted}>
+        {#if showDeleted}
+            Show Active Views
+        {:else}
+            Show Recently Deleted
+        {/if}
+    </button>
+    
+    
+    {#if showDeleted}
+        <div class="recently-deleted">
+            {#each views.filter(v => v.deleted) as deletedView}
+                <div>
+                    <p>{deletedView.revisions[0].prompt}</p>
+                    <button on:click={() => restoreView(deletedView.id)}>Restore</button>
+                </div>
+            {/each}
+        </div>
+    {:else}
+        <div class="grid-container">
+            <!-- Existing code for displaying active views -->
+        </div>
+    {/if}
+    
     <ConfirmationModal
         {showModal}
         onConfirm={confirmDeletion}

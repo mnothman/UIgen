@@ -3,10 +3,14 @@
   <!-- history needs to be for the current prompt which is clicked on, and then it is sorted by time stamps -->
   <div class="history">
     <!-- {#each [...view_data.revisions].sort((a, b) => b.isFavorite - a.isFavorite || b.timestamp - a.timestamp) as revision, index} -->
+
+
+
+    <!-- ENDED HERE TRYING TO MAKE THE CURRENT PROMPT THE SELECTED PROMPT -->
+    <p><strong>Current Prompt:</strong> {selectedRevision}</p>
     {#each sortedRevisions as revision, index}
 
       <button type="button" class="revision" on:click={() => selectRevision(revision.timestamp)} on:keydown={(event) => handleKeyDown(event, index)}>
-
       <p><strong>Prompt:</strong> {revision.prompt}</p>
       <p><strong>Timestamp:</strong> {new Date(revision.timestamp).toLocaleString()}</p>
       </button>
@@ -70,6 +74,7 @@ import { writable } from 'svelte/store';
 
 let promptInput = ''; 
 let placeholder = 'Enter your prompt here';
+let selectedRevision;
 
   function getRandomExample() {
     const examples = [
@@ -117,7 +122,8 @@ async function genui() {
         timestamp: Date.now(),
         prompt,
         code: response.choices[0].message.content,
-        isFavorite: false, 
+        isFavorite: false,
+        isDeleted: false,
     };
     newRevision.code = newRevision.code.replace(/^```html\n/, '').replace(/\n```\s*$/, '');
 
