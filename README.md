@@ -6,6 +6,8 @@ https://openai.com/blog/openai-api
 -can click and edit from prevision revisions in chat history  
 -favorite & delete chats, copy code button  
 
+To run project simple clone and run: <br/>
+`npm run dev`
 
 Home page: <br/>
 ![homepageuigen](https://github.com/user-attachments/assets/45acbb9f-c510-4042-be8f-ab8df575ce7d) <br/>
@@ -16,5 +18,3 @@ Inside a prompt with displayed prompt: <br/>
 Code for displayed prompt: <br/>
 ![useageuigen2](https://github.com/user-attachments/assets/ebe1080f-c2d4-44fd-a5f9-636539a8beb3)
 
-To run project simple clone and run: <br/>
-`npm run dev`
